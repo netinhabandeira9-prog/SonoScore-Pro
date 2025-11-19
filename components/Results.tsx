@@ -87,19 +87,29 @@ export const Results: React.FC<ResultsProps> = ({ analysis, userEmail, isPaid, o
     try {
         const element = resultRef.current;
         
-        // Hide buttons for print
+        // 1. Hide interactive elements (buttons, active tabs)
         const buttons = document.querySelectorAll('.no-print');
         buttons.forEach((el: any) => el.style.display = 'none');
 
+        // 2. Swap Interactive View for Full List View
+        const interactivePlan = document.getElementById('interactive-plan');
+        const staticFullPlan = document.getElementById('static-full-plan');
+
+        if (interactivePlan) interactivePlan.style.display = 'none';
+        if (staticFullPlan) staticFullPlan.style.display = 'block';
+
         const canvas = await html2canvas(element, {
             scale: 2,
-            backgroundColor: '#0f172a',
+            backgroundColor: '#0f172a', // Force dark background
             useCORS: true,
             logging: false,
-            allowTaint: true
+            allowTaint: true,
+            windowWidth: 1200 // Force desktop width for better layout
         });
 
-        // Restore buttons
+        // 3. Restore elements
+        if (interactivePlan) interactivePlan.style.display = 'block';
+        if (staticFullPlan) staticFullPlan.style.display = 'none';
         buttons.forEach((el: any) => el.style.display = 'flex');
 
         const imgData = canvas.toDataURL('image/png');
@@ -411,81 +421,135 @@ export const Results: React.FC<ResultsProps> = ({ analysis, userEmail, isPaid, o
                             </div>
                         </div>
 
-                        {/* TABS for Phases */}
-                        <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
-                            {analysis.recoveryPlan.map((phase, idx) => (
+                        {/* --- INTERACTIVE TABS (VISIBLE ON SCREEN) --- */}
+                        <div id="interactive-plan">
+                            <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
+                                {analysis.recoveryPlan.map((phase, idx) => (
+                                    <button 
+                                        key={idx}
+                                        onClick={() => setActivePlanTab(idx)}
+                                        className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
+                                            activePlanTab === idx 
+                                            ? 'bg-accent-600 border-accent-500 text-white shadow-lg' 
+                                            : 'bg-night-900 border-white/5 text-slate-400 hover:text-white'
+                                        }`}
+                                    >
+                                        {phase.duration}
+                                    </button>
+                                ))}
                                 <button 
-                                    key={idx}
-                                    onClick={() => setActivePlanTab(idx)}
-                                    className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
-                                        activePlanTab === idx 
-                                        ? 'bg-accent-600 border-accent-500 text-white shadow-lg' 
+                                    onClick={() => setActivePlanTab(3)}
+                                    className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all border flex items-center gap-2 ${
+                                        activePlanTab === 3 
+                                        ? 'bg-purple-600 border-purple-500 text-white shadow-lg' 
                                         : 'bg-night-900 border-white/5 text-slate-400 hover:text-white'
                                     }`}
                                 >
-                                    {phase.duration}
+                                    <Pill size={14} /> Suplementos
                                 </button>
-                            ))}
-                            <button 
-                                onClick={() => setActivePlanTab(3)}
-                                className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all border flex items-center gap-2 ${
-                                    activePlanTab === 3 
-                                    ? 'bg-purple-600 border-purple-500 text-white shadow-lg' 
-                                    : 'bg-night-900 border-white/5 text-slate-400 hover:text-white'
-                                }`}
-                            >
-                                <Pill size={14} /> Suplementos
-                            </button>
-                        </div>
+                            </div>
 
-                        <div className="min-h-[300px]">
-                            {activePlanTab < 3 ? (
-                                // Cronological Plan Content
-                                <div className="animate-fade-in">
-                                    <div className="mb-4">
-                                        <h4 className="text-lg font-bold text-white">{analysis.recoveryPlan[activePlanTab].title}</h4>
-                                        <p className="text-accent-400 text-sm font-medium">Foco: {analysis.recoveryPlan[activePlanTab].focus}</p>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {analysis.recoveryPlan[activePlanTab].steps.map((step, sIdx) => (
-                                            <div key={sIdx} className="flex gap-3 items-start bg-night-900/50 p-3 rounded-lg border border-white/5">
-                                                <div className="mt-1 w-5 h-5 rounded-full bg-accent-500/20 flex items-center justify-center text-accent-400 text-xs font-bold flex-shrink-0">
-                                                    {sIdx + 1}
+                            <div className="min-h-[300px]">
+                                {activePlanTab < 3 ? (
+                                    // Interactive Content: Phases
+                                    <div className="animate-fade-in">
+                                        <div className="mb-4">
+                                            <h4 className="text-lg font-bold text-white">{analysis.recoveryPlan[activePlanTab].title}</h4>
+                                            <p className="text-accent-400 text-sm font-medium">Foco: {analysis.recoveryPlan[activePlanTab].focus}</p>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {analysis.recoveryPlan[activePlanTab].steps.map((step, sIdx) => (
+                                                <div key={sIdx} className="flex gap-3 items-start bg-night-900/50 p-3 rounded-lg border border-white/5">
+                                                    <div className="mt-1 w-5 h-5 rounded-full bg-accent-500/20 flex items-center justify-center text-accent-400 text-xs font-bold flex-shrink-0">
+                                                        {sIdx + 1}
+                                                    </div>
+                                                    <div className="text-slate-300 text-sm leading-relaxed">
+                                                        <ReactMarkdown>{step}</ReactMarkdown>
+                                                    </div>
                                                 </div>
-                                                <div className="text-slate-300 text-sm leading-relaxed">
-                                                    <ReactMarkdown>{step}</ReactMarkdown>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    // Interactive Content: Supplements
+                                    <div className="animate-fade-in grid gap-4">
+                                        <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-xl mb-2">
+                                            <p className="text-xs text-purple-300 leading-relaxed">
+                                                <strong>Nota:</strong> Esta é uma sugestão educacional baseada em neuroquímica. Consulte seu médico antes de iniciar qualquer suplementação.
+                                            </p>
+                                        </div>
+                                        {analysis.supplementStack.map((supp, sIdx) => (
+                                            <div key={sIdx} className="flex flex-col sm:flex-row sm:items-center gap-4 bg-night-900 p-4 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors group">
+                                                <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                                                    <Pill size={24} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-start">
+                                                        <h4 className="font-bold text-white text-lg">{supp.name}</h4>
+                                                        <span className="px-2 py-1 bg-white/5 rounded text-xs font-mono text-slate-400 border border-white/5">{supp.dosage}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs text-purple-400 font-bold mt-1 mb-2 uppercase tracking-wide">
+                                                        <Clock size={12} /> {supp.timing}
+                                                    </div>
+                                                    <p className="text-sm text-slate-400 leading-relaxed">{supp.reason}</p>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            ) : (
-                                // Supplement Stack Content
-                                <div className="animate-fade-in grid gap-4">
-                                    <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-xl mb-2">
-                                        <p className="text-xs text-purple-300 leading-relaxed">
-                                            <strong>Nota:</strong> Esta é uma sugestão educacional baseada em neuroquímica. Consulte seu médico antes de iniciar qualquer suplementação.
-                                        </p>
-                                    </div>
-                                    {analysis.supplementStack.map((supp, sIdx) => (
-                                        <div key={sIdx} className="flex flex-col sm:flex-row sm:items-center gap-4 bg-night-900 p-4 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors group">
-                                            <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
-                                                <Pill size={24} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="flex justify-between items-start">
-                                                    <h4 className="font-bold text-white text-lg">{supp.name}</h4>
-                                                    <span className="px-2 py-1 bg-white/5 rounded text-xs font-mono text-slate-400 border border-white/5">{supp.dosage}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* --- STATIC FULL LIST (HIDDEN ON SCREEN, VISIBLE ON PDF) --- */}
+                        <div id="static-full-plan" style={{ display: 'none' }}>
+                            <div className="space-y-8">
+                                {analysis.recoveryPlan.map((phase, pIdx) => (
+                                    <div key={pIdx} className="border-l-2 border-accent-500/50 pl-4 ml-2">
+                                        <div className="mb-4">
+                                            <h4 className="text-lg font-bold text-white">{phase.title}</h4>
+                                            <p className="text-accent-400 text-sm font-medium">Foco: {phase.focus}</p>
+                                        </div>
+                                        <div className="space-y-3 mb-6">
+                                            {phase.steps.map((step, sIdx) => (
+                                                <div key={sIdx} className="flex gap-3 items-start bg-night-900/30 p-3 rounded-lg border border-white/5">
+                                                    <div className="mt-1 w-5 h-5 rounded-full bg-accent-500/20 flex items-center justify-center text-accent-400 text-xs font-bold flex-shrink-0">
+                                                        {sIdx + 1}
+                                                    </div>
+                                                    <div className="text-slate-300 text-sm leading-relaxed">
+                                                        <ReactMarkdown>{step}</ReactMarkdown>
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-xs text-purple-400 font-bold mt-1 mb-2 uppercase tracking-wide">
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+
+                                <div className="mt-8 pt-6 border-t border-white/10">
+                                    <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <Pill className="text-purple-400" size={20} />
+                                        Stack de Suplementação
+                                    </h4>
+                                    <div className="grid gap-4">
+                                        <div className="bg-purple-500/10 border border-purple-500/20 p-3 rounded-xl">
+                                            <p className="text-[10px] text-purple-300">
+                                                *Sugestão educacional. Consulte seu médico.
+                                            </p>
+                                        </div>
+                                        {analysis.supplementStack.map((supp, sIdx) => (
+                                            <div key={sIdx} className="bg-night-900 p-4 rounded-xl border border-white/5">
+                                                <div className="flex justify-between items-start">
+                                                    <h4 className="font-bold text-white">{supp.name}</h4>
+                                                    <span className="px-2 py-1 bg-white/5 rounded text-xs text-slate-400">{supp.dosage}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-purple-400 font-bold mt-1 mb-2">
                                                     <Clock size={12} /> {supp.timing}
                                                 </div>
-                                                <p className="text-sm text-slate-400 leading-relaxed">{supp.reason}</p>
+                                                <p className="text-sm text-slate-400">{supp.reason}</p>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 )}
