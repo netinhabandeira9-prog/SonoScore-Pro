@@ -1,15 +1,16 @@
+// src/pages/ThankYou.tsx
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
 
 export default function ThankYou() {
-  const [searchParams] = useSearchParams();
-  const paymentId = searchParams.get('payment_id') || 'unknown';
+  // Pega o payment_id da URL (ex: /obrigado?payment_id=pay_123456789)
+  const urlParams = new URLSearchParams(window.location.search);
+  const paymentId = urlParams.get('payment_id') || 'unknown';
 
   useEffect(() => {
     if (window.fbq) {
       window.fbq('track', 'Purchase', {
-        value: R$9,90,                  
+        value: 9.90,                                 // ← R$ 9,90 (valor correto)
         currency: 'BRL',
         content_name: 'SonoScore Pro - Relatório Completo',
         transaction_id: paymentId,
@@ -29,7 +30,7 @@ export default function ThankYou() {
           href="/"
           className="inline-block bg-accent-500 hover:bg-accent-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition"
         >
-          Voltar para o App
+          Ver Meu Relatório
         </a>
       </div>
     </div>
