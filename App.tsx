@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
+import ThankYou from './pages/ThankYou'; // ← NOVA IMPORTAÇÃO
 import { AppState, QuizAnswers, UserData, AnalysisResult } from './types';
 import { analyzeSleep } from './services/geminiService';
 import { submitLead } from './services/web3FormService';
@@ -13,7 +14,17 @@ const App: React.FC = () => {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isPaid, setIsPaid] = useState(false);
 
-  // Prevent accidental refresh which would lose state
+  // ===== NOVO: DETECTA A PÁGINA /obrigado =====
+  const isThankYouPage = window.location.pathname === '/obrigado' ||
+                         window.location.pathname.includes('/obrigado?');
+
+  // Se estiver na página de obrigado → mostra só ela e ignora todo o resto
+  if (isThankYouPage) {
+    return <ThankYou />;
+  }
+  // =============================================
+
+  // (todo o useEffect e funções antigas continuam iguais)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (currentState === AppState.PRE_RESULT || currentState === AppState.FULL_RESULT) {
@@ -22,30 +33,22 @@ const App: React.FC = () => {
         return '';
       }
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentState]);
 
-  const startQuiz = () => {
-    setCurrentState(AppState.QUIZ);
-  };
+  const startQuiz = () => setCurrentState(AppState.QUIZ);
 
   const handleQuizSubmit = async (user: UserData, answers: QuizAnswers) => {
     setUserData(user);
     setCurrentState(AppState.PROCESSING);
-
-    // Parallel execution: Capture Lead & Analyze Data
     try {
-      submitLead(user, answers); // Fire and forget lead capture
-      
+      submitLead(user, answers);
       const result = await analyzeSleep(user, answers);
       setAnalysis(result);
-      
       setCurrentState(AppState.PRE_RESULT);
     } catch (error) {
       console.error("Process failed", error);
-      // Handle error gracefully in a real app
       setCurrentState(AppState.LANDING);
       alert("Ocorreu um erro. Tente novamente.");
     }
@@ -53,15 +56,14 @@ const App: React.FC = () => {
 
   const handlePaymentSuccess = () => {
     setIsPaid(true);
-    // In a real app, you might fetch updated data here or just unlock the view
     setCurrentState(AppState.FULL_RESULT);
   };
 
   const handleRetake = () => {
     if (window.confirm("Tem certeza? Ao reiniciar, você perderá o resultado atual.")) {
-        setAnalysis(null);
-        setIsPaid(false); // Reset payment status for new analysis
-        setCurrentState(AppState.QUIZ);
+      setAnalysis(null);
+      setIsPaid(false);
+      setCurrentState(AppState.QUIZ);
     }
   };
 
@@ -70,15 +72,14 @@ const App: React.FC = () => {
       {currentState === AppState.LANDING && (
         <LandingPage onStart={startQuiz} />
       )}
-
       {currentState === AppState.QUIZ && (
-        <Quiz 
-          onSubmit={handleQuizSubmit} 
+        <Quiz
+          onSubmit={handleQuizSubmit}
           onBack={() => setCurrentState(AppState.LANDING)}
         />
       )}
-
       {currentState === AppState.PROCESSING && (
+        // ... seu loading lindo continua aqui (não mudei nada)
         <div className="min-h-screen flex flex-col items-center justify-center bg-night-900 p-6 text-center relative">
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="relative">
@@ -87,7 +88,6 @@ const App: React.FC = () => {
             </div>
             <h2 className="mt-8 text-2xl font-bold text-white">Analisando seus dados...</h2>
             <p className="text-slate-400 mt-2">Comparando seus biomarcadores com +10.000 padrões clínicos.</p>
-            
             <div className="mt-8 w-64 h-1 bg-night-800 rounded-full overflow-hidden">
               <div className="h-full bg-accent-500 animate-[loading_2s_ease-in-out_infinite] w-1/3"></div>
             </div>
@@ -108,14 +108,13 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
-
       {(currentState === AppState.PRE_RESULT || currentState === AppState.FULL_RESULT) && analysis && (
-        <Results 
+        <Results
           analysis={analysis}
           userEmail={userData?.email || ''}
-          isPaid={isPaid} 
+          isPaid={isPaid}
           onPay={handlePaymentSuccess}
-          onRetake={handleRetake} 
+          onRetake={handleRetake}
         />
       )}
     </div>
