@@ -10,15 +10,13 @@ import { Loader2 } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentState, setCurrentState] = useState<AppState>(AppState.LANDING);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [analysis, setAnalysisResult | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isPaid, setIsPaid] = useState(false);
 
-  // DETECÇÃO MELHORADA E GARANTIDA DA PÁGINA /obrigado
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const isThankYouPage = currentUrl.includes('/obrigado');
+  // DETECÇÃO PERFEITA DA PÁGINA /obrigado (funciona em SPA + Vercel)
+  const isThankYouPage = typeof window !== 'undefined' && window.location.href.includes('/obrigado');
 
-  // Se estiver em /obrigado (com ou sem query string) → mostra só a página de sucesso
   if (isThankYouPage) {
     return <ThankYou />;
   }
@@ -28,7 +26,6 @@ const App: React.FC = () => {
       if (currentState === AppState.PRE_RESULT || currentState === AppState.FULL_RESULT) {
         e.preventDefault();
         e.returnValue = '';
-        return '';
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
