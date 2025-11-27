@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+   
     <!-- SEO & Social Sharing (WhatsApp Preview) -->
     <title>SonoScore-Pro | Descubra o Código do Seu Sono</title>
     <meta name="description" content="Análise biométrica avançada do sono. Descubra em 2 minutos por que você acorda cansado e receba um protocolo de recuperação neuroquímica." />
@@ -13,28 +13,24 @@
     <meta property="og:image" content="https://images.unsplash.com/photo-1511296933631-18b5f06a8973?auto=format&fit=crop&w=1200&q=80" />
     <meta property="og:url" content="https://sonoscore.app" />
     <meta name="theme-color" content="#020617" />
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1857716038150097');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1857716038150097&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-    <!-- Mantendo Tailwind via CDN para simplificar o setup de CSS -->
+
+    <!-- ==================== META PIXEL (script no head) ==================== -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1857716038150097');
+      fbq('track', 'PageView');
+    </script>
+    <!-- ===================================================================== -->
+
+    <!-- Tailwind + Config -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -71,27 +67,21 @@ src="https://www.facebook.com/tr?id=1857716038150097&ev=PageView&noscript=1"
         }
       }
     </script>
+
+    <!-- Fontes e estilos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    
     <style>
       body {
         background-color: #020617;
         color: #f8fafc;
       }
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0f172a; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #334155; 
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #6366f1; 
-      }
-
-      /* PDF Generation Fixes */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #0f172a; }
+      ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
       .print-container {
         background-color: #020617 !important;
         color: #f8fafc !important;
@@ -99,25 +89,34 @@ src="https://www.facebook.com/tr?id=1857716038150097&ev=PageView&noscript=1"
         min-height: 297mm;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
-    "vite": "https://aistudiocdn.com/vite@^7.2.2",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "html2canvas": "https://aistudiocdn.com/html2canvas@^1.4.1",
-    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.3"
-  }
-}
-</script>
-</head>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
+        "vite": "https://aistudiocdn.com/vite@^7.2.2",
+        "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "react": "https://aistudiocdn.com/react@^19.2.0",
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+        "html2canvas": "https://aistudiocdn.com/html2canvas@^1.4.1",
+        "jspdf": "https://aistudiocdn.com/jspdf@^3.0.3"
+      }
+    }
+    </script>
+  </head>
+
   <body>
     <div id="root"></div>
-    <!-- Entry Point para o Vite -->
+
+    <!-- ==================== META PIXEL (noscript no body – aqui pode ter img) ==================== -->
+    <noscript>
+      <img height="1" width="1" style="display:none"
+           src="https://www.facebook.com/tr?id=1857716038150097&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- ========================================================================================= -->
+
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
