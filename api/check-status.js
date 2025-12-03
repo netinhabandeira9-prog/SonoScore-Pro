@@ -12,22 +12,24 @@ export default async function handler(req, res) {
     const response = await fetch(`${baseUrl}/payments/${id}`, {
       headers: { access_token: apiKey },
     });
-
     const data = await response.json();
 
     const isPaid = data.status === 'RECEIVED' || data.status === 'CONFIRMED';
 
-    // SE ESTIVER PAGO → REDIRECIONA AUTOMATICAMENTE PARA A PÁGINA DE OBRIGADO
-    if (isPaid) {
-      const redirectUrl = `https://www.sonoscorepro.com.br/obrigado?payment_id=${id}`;
-      return res.redirect(307, redirectUrl); // 307 mantém o método GET
+    // Se for requisição do frontend (polling) → retorna JSON
+    if (req.headers['x-requested-with'] || req.headers['content-type']?.includes('json')) {
+      return res.status(200).json({ approved: isPaid, status: data.status });
     }
 
-    // SE AINDA NÃO ESTIVER PAGO → continua retornando JSON como antes
+    // Se o usuário abrir direto no navegador → redireciona pra página de obrigado
+    if (isPaid) {
+      return res.redirect(307, `https://www.sonoscorepro.com.br/obrigado?payment_id=${id}`);
+    }
+
     return res.status(200).json({ approved: false, status: data.status });
 
   } catch (error) {
     console.error('Erro ao verificar pagamento:', error);
-    return res.status(500).json({ approved: false });
+    return res.status(200).json({ approved: false });
   }
 }
