@@ -637,7 +637,7 @@ export const Results: React.FC<ResultsProps> = ({ analysis, userEmail, isPaid, o
                     onClick={onRetake}
                     className="hidden lg:flex w-full mt-6 py-3 border border-white/10 hover:bg-white/5 text-slate-400 hover:text-white rounded-xl transition-colors items-center justify-center gap-2 text-sm font-medium no-print"
                 >
-                    <RotateCcw size={16} /> Refazer Teste Gratuitamente
+                    <RotateCcw size={16} /> Refazer sua análise
                 </button>
             </div>
             </div>
