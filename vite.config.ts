@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { sitemap } from 'vite-plugin-sitemap';
+import pkg from 'vite-plugin-sitemap';
+const { sitemap } = pkg;
 
 export default defineConfig({
   plugins: [
@@ -11,7 +12,7 @@ export default defineConfig({
         { url: '/',          changefreq: 'daily',   priority: 1.0 },
         { url: '/quiz',      changefreq: 'daily',   priority: 0.9 },
         { url: '/resultado', changefreq: 'weekly',  priority: 0.9 },
-        { url: '/obrigado',   changefreq: 'monthly', priority: 0.7 },
+        { url: '/obrigado',  changefreq: 'monthly', priority: 0.7 },
       ],
       exclude: ['/app', '/app/*', '/login', '/dashboard', '/billing'],
       generateRobotsTxt: true,
