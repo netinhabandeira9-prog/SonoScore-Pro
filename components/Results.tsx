@@ -5,7 +5,6 @@ import ReactMarkdown from 'react-markdown';
 import { paymentService } from '../services/paymentService';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
-import { Helmet } from 'react-helmet-async';
 
 interface ResultsProps {
   analysis: AnalysisResult;
@@ -209,15 +208,6 @@ export const Results: React.FC<ResultsProps> = ({ analysis, userEmail, isPaid, o
   };
 
   return (
-  <>
-    {/* SEO que funciona em qualquer Vite sem instalar nada */}
-    <title>SonoScore {analysis.score}/100 • Protocolo Personalizado de 30 Dias</title>
-    <meta name="description" content={`Score ${analysis.score}/100 • Eficiência ${analysis.sleepEfficiency}% • Cronotipo Leão. Protocolo completo de 30 dias com Reset Biológico, Higiene Avançada, Consolidação + suplementos (Ashwagandha KSM-66, Magnésio, L-Teanina).`} />
-    <meta property="og:title" content={`Meu SonoScore é ${analysis.score}/100 – Veja meu protocolo completo`} />
-    <meta property="og:description" content="Análise biométrica do sono + protocolo de 30 dias com suplementação personalizada" />
-    <meta property="og:image" content="https://www.sonoscorepro.com.br/og-relatorio.jpg" />
-    <meta property="og:url" content="https://www.sonoscorepro.com.br/resultado" />
-
     <div className="min-h-screen bg-night-900 text-slate-200 selection:bg-accent-500/30 pb-12">
       {/* Top Navigation */}
       <nav className="bg-night-950/50 border-b border-white/5 py-4 backdrop-blur-md sticky top-0 z-50 print:hidden">
