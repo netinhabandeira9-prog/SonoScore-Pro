@@ -212,12 +212,12 @@ export const Results: React.FC<ResultsProps> = ({ analysis, userEmail, isPaid, o
   <>
     <Helmet>
       <title>SonoScore {analysis.score}/100 • Protocolo Personalizado de 30 Dias</title>
-      <meta name="description" content={`Score ${analysis.score}/100 • Eficiência ${analysis.sleepEfficiency}% • Cronotipo detectado. Receba seu protocolo de 30 dias com fases Reset, Higiene Avançada e Consolidação + suplementos (Magnésio, Ashwagandha KSM-66, L-Teanina).`} />
+      <meta name="description" content={`Score ${analysis.score}/100 • Eficiência ${analysis.sleepEfficiency}% • Cronotipo ${analysis.circadianProfile.includes('Leão') ? 'Leão' : 'detectado'}. Seu protocolo completo com fases Reset, Higiene Avançada e Consolidação + suplementação personalizada.`} />
       <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://www.sonoscorepro.com.br/resultado" />
       
       <meta property="og:title" content={`Meu SonoScore é ${analysis.score}/100 – Veja meu protocolo completo`} />
-      <meta property="og:description" content="Análise biométrica completa do sono + protocolo de 30 dias com suplementação personalizada" />
+      <meta property="og:description" content="Análise biométrica do sono + protocolo de 30 dias com suplementação personalizada" />
       <meta property="og:image" content="https://www.sonoscorepro.com.br/og-relatorio.jpg" />
       <meta property="og:url" content="https://www.sonoscorepro.com.br/resultado" />
     </Helmet>
