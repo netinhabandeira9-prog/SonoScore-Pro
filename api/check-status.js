@@ -16,20 +16,14 @@ export default async function handler(req, res) {
 
     const isPaid = data.status === 'RECEIVED' || data.status === 'CONFIRMED';
 
-    // Se for requisição do frontend (polling) → retorna JSON
-    if (req.headers['x-requested-with'] || req.headers['content-type']?.includes('json')) {
-      return res.status(200).json({ approved: isPaid, status: data.status });
-    }
-
-    // Se o usuário abrir direto no navegador → redireciona pra página de obrigado
-    if (isPaid) {
-      return res.redirect(307, `https://www.sonoscorepro.com.br/obrigado?payment_id=${id}`);
-    }
-
-    return res.status(200).json({ approved: false, status: data.status });
+    // SEMPRE retorna JSON pro frontend (o que o Results.tsx espera)
+    res.status(200).json({ 
+      approved: isPaid,
+      status: data.status 
+    });
 
   } catch (error) {
     console.error('Erro ao verificar pagamento:', error);
-    return res.status(200).json({ approved: false });
+    res.status(200).json({ approved: false });
   }
 }
